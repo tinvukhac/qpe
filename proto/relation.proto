@@ -8,7 +8,7 @@ message Relation {
         MAPJOIN = 1;
         EXTRACT = 2;
         FILTER = 3;
-        FORWARD = 4;
+        /*FORWARD = 4;
         GROUPBY = 5;
         LIMIT = 6;
         SCRIPT = 7;
@@ -29,7 +29,7 @@ message Relation {
         ORCFILEMERGE = 22;
         RCFILEMERGE = 23;
         MERGEJOIN = 24;
-        SPARKPRUNINGSINK = 25;
+        SPARKPRUNINGSINK = 25;*/
         NONE = 26; // No operator for leaf nodes of graph, so we can handle cases uniformly.
     }
 

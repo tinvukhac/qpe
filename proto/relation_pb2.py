@@ -13,7 +13,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='relation.proto',
   package='qpe.proto',
-  serialized_pb='\n\x0erelation.proto\x12\tqpe.proto\"\x8f\x04\n\x08Relation\x12&\n\x02op\x18\x01 \x01(\x0e\x32\x1a.qpe.proto.Relation.OpCode\x12&\n\trelations\x18\x02 \x03(\x0b\x32\x13.qpe.proto.Relation\x12\x0c\n\x04rows\x18\x03 \x01(\x03\x12\r\n\x05width\x18\x04 \x01(\x03\x12\x0e\n\x06result\x18\x05 \x01(\x03\"\x85\x03\n\x06OpCode\x12\x08\n\x04JOIN\x10\x00\x12\x0b\n\x07MAPJOIN\x10\x01\x12\x0b\n\x07\x45XTRACT\x10\x02\x12\n\n\x06\x46ILTER\x10\x03\x12\x0b\n\x07\x46ORWARD\x10\x04\x12\x0b\n\x07GROUPBY\x10\x05\x12\t\n\x05LIMIT\x10\x06\x12\n\n\x06SCRIPT\x10\x07\x12\n\n\x06SELECT\x10\x08\x12\r\n\tTABLESCAN\x10\t\x12\x0c\n\x08\x46ILESINK\x10\n\x12\x0e\n\nREDUCESINK\x10\x0b\x12\t\n\x05UNION\x10\x0c\x12\x08\n\x04UDTF\x10\r\x12\x13\n\x0fLATERALVIEWJOIN\x10\x0e\x12\x16\n\x12LATERALVIEWFORWARD\x10\x0f\x12\x11\n\rHASHTABLESINK\x10\x10\x12\x12\n\x0eHASHTABLEDUMMY\x10\x11\x12\x07\n\x03PTF\x10\x12\x12\x07\n\x03MUX\x10\x13\x12\t\n\x05\x44\x45MUX\x10\x14\x12\t\n\x05\x45VENT\x10\x15\x12\x10\n\x0cORCFILEMERGE\x10\x16\x12\x0f\n\x0bRCFILEMERGE\x10\x17\x12\r\n\tMERGEJOIN\x10\x18\x12\x14\n\x10SPARKPRUNINGSINK\x10\x19\x12\x08\n\x04NONE\x10\x1a')
+  serialized_pb='\n\x0erelation.proto\x12\tqpe.proto\"\xcb\x01\n\x08Relation\x12&\n\x02op\x18\x01 \x01(\x0e\x32\x1a.qpe.proto.Relation.OpCode\x12&\n\trelations\x18\x02 \x03(\x0b\x32\x13.qpe.proto.Relation\x12\x0c\n\x04rows\x18\x03 \x01(\x03\x12\r\n\x05width\x18\x04 \x01(\x03\x12\x0e\n\x06result\x18\x05 \x01(\x03\"B\n\x06OpCode\x12\x08\n\x04JOIN\x10\x00\x12\x0b\n\x07MAPJOIN\x10\x01\x12\x0b\n\x07\x45XTRACT\x10\x02\x12\n\n\x06\x46ILTER\x10\x03\x12\x08\n\x04NONE\x10\x1a')
 
 
 
@@ -40,102 +40,14 @@ _RELATION_OPCODE = _descriptor.EnumDescriptor(
       options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='FORWARD', index=4, number=4,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='GROUPBY', index=5, number=5,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='LIMIT', index=6, number=6,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='SCRIPT', index=7, number=7,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='SELECT', index=8, number=8,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='TABLESCAN', index=9, number=9,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='FILESINK', index=10, number=10,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='REDUCESINK', index=11, number=11,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='UNION', index=12, number=12,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='UDTF', index=13, number=13,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='LATERALVIEWJOIN', index=14, number=14,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='LATERALVIEWFORWARD', index=15, number=15,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='HASHTABLESINK', index=16, number=16,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='HASHTABLEDUMMY', index=17, number=17,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='PTF', index=18, number=18,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='MUX', index=19, number=19,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='DEMUX', index=20, number=20,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='EVENT', index=21, number=21,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='ORCFILEMERGE', index=22, number=22,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='RCFILEMERGE', index=23, number=23,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='MERGEJOIN', index=24, number=24,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='SPARKPRUNINGSINK', index=25, number=25,
-      options=None,
-      type=None),
-    _descriptor.EnumValueDescriptor(
-      name='NONE', index=26, number=26,
+      name='NONE', index=4, number=26,
       options=None,
       type=None),
   ],
   containing_type=None,
   options=None,
-  serialized_start=168,
-  serialized_end=557,
+  serialized_start=167,
+  serialized_end=233,
 )
 
 
@@ -192,7 +104,7 @@ _RELATION = _descriptor.Descriptor(
   is_extendable=False,
   extension_ranges=[],
   serialized_start=30,
-  serialized_end=557,
+  serialized_end=233,
 )
 
 _RELATION.fields_by_name['op'].enum_type = _RELATION_OPCODE

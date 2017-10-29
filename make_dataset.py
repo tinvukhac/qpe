@@ -17,6 +17,30 @@ tf.flags.DEFINE_integer('num_samples', 1000,
                         'How many samples to put into the table.')
 FLAGS = tf.flags.FLAGS
 
+system1_weight_bias_dict = {"JOIN": {"weight": 2.5, "bias": 1.0},
+                            "MAPJOIN": {"weight": 1.2, "bias": 1.0},
+                            "EXTRACT": {"weight": 1.7, "bias": 1.0},
+                            "FILTER": {"weight": 1.2, "bias": 1.0}}
+
+system2_weight_bias_dict = {"JOIN": {"weight": 1.1, "bias": 1.0},
+                            "MAPJOIN": {"weight": 2.2, "bias": 1.0},
+                            "EXTRACT": {"weight": 1.1, "bias": 1.0},
+                            "FILTER": {"weight": 1.0, "bias": 1.0}}
+
+system3_weight_bias_dict = {"JOIN": {"weight": 1.5, "bias": 1.0},
+                            "MAPJOIN": {"weight": 1.2, "bias": 1.0},
+                            "EXTRACT": {"weight": 2.7, "bias": 1.0},
+                            "FILTER": {"weight": 1.0, "bias": 1.0}}
+
+
+def evaluate_relation(relation, weight_bias_dict):
+    if relation.op == Relation.NONE:
+        return relation.rows
+    x = 0
+    for r in relation.relations:
+        x += evaluate_relation(r, weight_bias_dict)
+    return weight_bias_dict[Relation.OpCode.keys()[relation.op]]["weight"] * x + weight_bias_dict[Relation.OpCode.keys()[relation.op]]["bias"]
+
 
 def random_relation(max_depth):
     def build(relation, max_depth):
@@ -49,16 +73,29 @@ def random_relation(max_depth):
 def make_random_relation():
     max_depth = random.choice(range(1, 5))
     relation = random_relation(max_depth)
-    relation.result = random.choice(range(3))
+
+    e = []
+    e.append(evaluate_relation(relation, system1_weight_bias_dict))
+    e.append(evaluate_relation(relation, system1_weight_bias_dict))
+    e.append(evaluate_relation(relation, system1_weight_bias_dict))
+    min_index = 0
+    min_value = e[0]
+    for i in range(len(e)):
+        if e[i] < min_value:
+            min_index = i
+            min_value = e[i]
+
+    relation.result = min_index
+    return relation
     # json = json_format.MessageToJson(relation)
     # return json
-    return relation.SerializeToString()
+    # return relation.SerializeToString()
 
 
 def main(unused_argv):
     record_output = tf.python_io.TFRecordWriter(FLAGS.output_path)
     for _ in xrange(FLAGS.num_samples):
-        record_output.write(make_random_relation())
+        record_output.write(make_random_relation().SerializeToString())
     record_output.close()
 
 

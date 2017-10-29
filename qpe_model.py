@@ -37,29 +37,7 @@ class QueryPerformanceEstimatorModel(object):
             'JOIN': query_op('JOIN'),
             'MAPJOIN': query_op('MAPJOIN'),
             'EXTRACT': query_op('EXTRACT'),
-            'FILTER': query_op('FILTER'),
-            'FORWARD': query_op('FORWARD'),
-            'GROUPBY': query_op('GROUPBY'),
-            'LIMIT': query_op('LIMIT'),
-            'SCRIPT': query_op('SCRIPT'),
-            'SELECT': query_op('SELECT'),
-            'TABLESCAN': query_op('TABLESCAN'),
-            'FILESINK' : query_op('FILESINK'),
-            'REDUCESINK': query_op('REDUCESINK'),
-            'UNION': query_op('UNION'),
-            'UDTF': query_op('UDTF'),
-            'LATERALVIEWJOIN': query_op('LATERALVIEWJOIN'),
-            'LATERALVIEWFORWARD' : query_op('LATERALVIEWFORWARD'),
-            'HASHTABLESINK': query_op('HASHTABLESINK'),
-            'HASHTABLEDUMMY': query_op('HASHTABLEDUMMY'),
-            'PTF': query_op('PTF'),
-            'MUX': query_op('MUX'),
-            'DEMUX': query_op('DEMUX'),
-            'EVENT': query_op('EVENT'),
-            'ORCFILEMERGE': query_op('ORCFILEMERGE'),
-            'RCFILEMERGE': query_op('RCFILEMERGE'),
-            'MERGEJOIN': query_op('MERGEJOIN'),
-            'SPARKPRUNINGSINK': query_op('SPARKPRUNINGSINK')})
+            'FILTER': query_op('FILTER')})
 
         relation = td.InputTransform(preprocess_relation) >> cases
         relation_declaration.resolve_to(relation)
@@ -95,3 +73,31 @@ class QueryPerformanceEstimatorModel(object):
 
     def build_feed_dict(self, relations):
         return self._compiler.build_feed_dict(relations)
+
+# 'NONE': nrows,
+#             'JOIN': query_op('JOIN'),
+#             'MAPJOIN': query_op('MAPJOIN'),
+#             'EXTRACT': query_op('EXTRACT'),
+#             'FILTER': query_op('FILTER'),
+#             'FORWARD': query_op('FORWARD'),
+#             'GROUPBY': query_op('GROUPBY'),
+#             'LIMIT': query_op('LIMIT'),
+#             'SCRIPT': query_op('SCRIPT'),
+#             'SELECT': query_op('SELECT'),
+#             'TABLESCAN': query_op('TABLESCAN'),
+#             'FILESINK' : query_op('FILESINK'),
+#             'REDUCESINK': query_op('REDUCESINK'),
+#             'UNION': query_op('UNION'),
+#             'UDTF': query_op('UDTF'),
+#             'LATERALVIEWJOIN': query_op('LATERALVIEWJOIN'),
+#             'LATERALVIEWFORWARD' : query_op('LATERALVIEWFORWARD'),
+#             'HASHTABLESINK': query_op('HASHTABLESINK'),
+#             'HASHTABLEDUMMY': query_op('HASHTABLEDUMMY'),
+#             'PTF': query_op('PTF'),
+#             'MUX': query_op('MUX'),
+#             'DEMUX': query_op('DEMUX'),
+#             'EVENT': query_op('EVENT'),
+#             'ORCFILEMERGE': query_op('ORCFILEMERGE'),
+#             'RCFILEMERGE': query_op('RCFILEMERGE'),
+#             'MERGEJOIN': query_op('MERGEJOIN'),
+#             'SPARKPRUNINGSINK': query_op('SPARKPRUNINGSINK')
