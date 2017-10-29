@@ -30,7 +30,7 @@ message Relation {
         RCFILEMERGE = 23;
         MERGEJOIN = 24;
         SPARKPRUNINGSINK = 25;
-        NONE = 26; // No operation for leave nodes of graph, so we can handle cases uniformly.
+        NONE = 26; // No operator for leaf nodes of graph, so we can handle cases uniformly.
     }
 
     optional OpCode op = 1;

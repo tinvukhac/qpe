@@ -10,7 +10,7 @@ NUM_LABELS = 3
 
 
 def preprocess_relation(expr):
-    # Set the op field for numbers, so we can handle cases uniformly.
+    # Set the op field for leaf nodes, so we can handle cases uniformly.
     if expr['rows'] is not None:
         expr['op'] = {'name': 'NONE'}
     return expr
