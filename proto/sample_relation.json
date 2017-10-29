@@ -1,0 +1,21 @@
+{
+  "result": "0", 
+  "relations": [
+    {
+      "relations": [
+        {
+          "width": "93", 
+          "rows": "1460", 
+          "op": "NONE"
+        }, 
+        {
+          "width": "65", 
+          "rows": "1280", 
+          "op": "NONE"
+        }
+      ], 
+      "op": "JOIN"
+    }
+  ], 
+  "op": "JOIN"
+}
