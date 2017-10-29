@@ -78,8 +78,8 @@ def make_random_relation():
 
     e = []
     e.append(evaluate_relation(relation, system1_weight_bias_dict))
-    e.append(evaluate_relation(relation, system1_weight_bias_dict))
-    e.append(evaluate_relation(relation, system1_weight_bias_dict))
+    e.append(evaluate_relation(relation, system2_weight_bias_dict))
+    e.append(evaluate_relation(relation, system3_weight_bias_dict))
     min_index = 0
     min_value = e[0]
     for i in range(len(e)):
