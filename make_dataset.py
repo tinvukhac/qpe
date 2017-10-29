@@ -45,8 +45,8 @@ def evaluate_relation(relation, weight_bias_dict):
 def random_relation(max_depth):
     def build(relation, max_depth):
         if max_depth == 0 or random.uniform(0, 1) < 1.0 / 3.0:
-            relation.rows = random.choice(range(50, 100))
-            relation.width = random.choice(range(10, 20))
+            relation.rows = random.choice(range(1000, 2000))
+            relation.width = random.choice(range(100, 200))
             relation.op = Relation.NONE
         else:
             if max_depth < 0:
@@ -71,7 +71,7 @@ def random_relation(max_depth):
 
 
 def make_random_relation():
-    max_depth = random.choice(range(1, 5))
+    max_depth = random.choice(range(1, 10))
     relation = random_relation(max_depth)
 
     e = []
