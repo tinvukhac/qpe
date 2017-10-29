@@ -15,21 +15,23 @@ tf.flags.DEFINE_integer('max_depth', 5,
                         'Maximum operators tree depth.')
 tf.flags.DEFINE_integer('num_samples', 1000,
                         'How many samples to put into the table.')
+tf.flags.DEFINE_string('output_format', 'proto',
+                       'Where to write the TFRecord file with the expressions.')
 FLAGS = tf.flags.FLAGS
 
-system1_weight_bias_dict = {"JOIN": {"weight": 2.5, "bias": 1.0},
+system1_weight_bias_dict = {"JOIN": {"weight": 1.5, "bias": 1.0},
                             "MAPJOIN": {"weight": 1.2, "bias": 1.0},
-                            "EXTRACT": {"weight": 1.7, "bias": 1.0},
+                            "EXTRACT": {"weight": 1.0, "bias": 1.0},
                             "FILTER": {"weight": 1.2, "bias": 1.0}}
 
 system2_weight_bias_dict = {"JOIN": {"weight": 1.1, "bias": 1.0},
-                            "MAPJOIN": {"weight": 2.2, "bias": 1.0},
+                            "MAPJOIN": {"weight": 1.5, "bias": 1.0},
                             "EXTRACT": {"weight": 1.1, "bias": 1.0},
                             "FILTER": {"weight": 1.0, "bias": 1.0}}
 
-system3_weight_bias_dict = {"JOIN": {"weight": 1.5, "bias": 1.0},
-                            "MAPJOIN": {"weight": 1.2, "bias": 1.0},
-                            "EXTRACT": {"weight": 2.7, "bias": 1.0},
+system3_weight_bias_dict = {"JOIN": {"weight": 1.2, "bias": 1.0},
+                            "MAPJOIN": {"weight": 1.5, "bias": 1.0},
+                            "EXTRACT": {"weight": 1.0, "bias": 1.0},
                             "FILTER": {"weight": 1.0, "bias": 1.0}}
 
 
@@ -46,7 +48,7 @@ def random_relation(max_depth):
     def build(relation, max_depth):
         if max_depth == 0 or random.uniform(0, 1) < 1.0 / 3.0:
             relation.rows = random.choice(range(1000, 2000))
-            relation.width = random.choice(range(100, 200))
+            relation.width = random.choice(range(50, 100))
             relation.op = Relation.NONE
         else:
             if max_depth < 0:
@@ -95,7 +97,12 @@ def make_random_relation():
 def main(unused_argv):
     record_output = tf.python_io.TFRecordWriter(FLAGS.output_path)
     for _ in xrange(FLAGS.num_samples):
-        record_output.write(make_random_relation().SerializeToString())
+        relation = make_random_relation()
+        if FLAGS.output_format == "json":
+            record_output.write(json_format.MessageToJson(relation))
+        else:
+            record_output.write(relation.SerializeToString())
+
     record_output.close()
 
 
