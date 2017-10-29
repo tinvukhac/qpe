@@ -41,20 +41,20 @@ def source_root():
         root = os.path.dirname(root)
     return root
 
-CALCULATOR_SOURCE_ROOT = source_root()
-CALCULATOR_PROTO_FILE = ('proto/relation.proto')
-CALCULATOR_EXPRESSION_PROTO = ('qpe.proto.Relation')
+QPE_SOURCE_ROOT = source_root()
+QPE_PROTO_FILE = ('proto/relation.proto')
+QPE_EXPRESSION_PROTO = ('qpe.proto.Relation')
 
 
-# Make sure serialized_message_to_tree can find the calculator example proto:
-proto_tools.map_proto_source_tree_path('', CALCULATOR_SOURCE_ROOT)
-proto_tools.import_proto_file(CALCULATOR_PROTO_FILE)
+# Make sure serialized_message_to_tree can find the relation example proto:
+proto_tools.map_proto_source_tree_path('', QPE_SOURCE_ROOT)
+proto_tools.import_proto_file(QPE_PROTO_FILE)
 
 
 def iterate_over_tf_record_protos(table_path, unused_message_type):
     while True:
         for v in tf.python_io.tf_record_iterator(table_path):
-            yield proto_tools.serialized_message_to_tree(CALCULATOR_EXPRESSION_PROTO, v)
+            yield proto_tools.serialized_message_to_tree(QPE_EXPRESSION_PROTO, v)
 
 
 def emit_values(supervisor, session, step, values):
