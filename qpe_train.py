@@ -4,7 +4,7 @@ from __future__ import print_function
 import os
 # import google3
 import six
-from six.moves import xrange  # pylint: disable=redefined-builtin
+from six.moves import xrange
 import tensorflow as tf
 import qpe_model
 from proto.relation_pb2 import Relation

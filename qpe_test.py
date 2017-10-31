@@ -11,7 +11,7 @@ def main():
     relation2.relations.extend([relation, relation])
     relation3 = Relation()
     relation3.op = Relation.JOIN
-    relation3.relations.extend([relation2, relation2, relation])
+    relation3.relations.extend([relation2, relation2, relation, relation])
 
     print(relation2)
     print(Relation.OpCode.keys()[relation2.op])

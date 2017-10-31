@@ -74,7 +74,7 @@ class QueryPerformanceEstimatorModel(object):
     def build_feed_dict(self, relations):
         return self._compiler.build_feed_dict(relations)
 
-# 'NONE': nrows,
+#             'NONE': nrows,
 #             'JOIN': query_op('JOIN'),
 #             'MAPJOIN': query_op('MAPJOIN'),
 #             'EXTRACT': query_op('EXTRACT'),
