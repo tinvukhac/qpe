@@ -5,6 +5,7 @@ from __future__ import print_function
 from six.moves import xrange
 import tensorflow as tf
 import random
+import os
 from google.protobuf import json_format
 from proto.relation_pb2 import Relation
 
@@ -96,11 +97,19 @@ def make_random_relation():
 
 def main(unused_argv):
     record_output = tf.python_io.TFRecordWriter(FLAGS.output_path)
-    for _ in xrange(FLAGS.num_samples):
-        relation = make_random_relation()
-        if FLAGS.output_format == "json":
-            record_output.write(json_format.MessageToJson(relation))
-        else:
+    # for _ in xrange(FLAGS.num_samples):
+    #     relation = make_random_relation()
+    #     if FLAGS.output_format == "json":
+    #         record_output.write(json_format.MessageToJson(relation))
+    #     else:
+    #         record_output.write(relation.SerializeToString())
+
+    dataset_path = './dataset'
+    for filename in os.listdir(dataset_path):
+        with open(dataset_path + "/" + filename) as json_query_file:
+            json_content = json_query_file.read()
+            relation = Relation()
+            json_format.Parse(json_content, relation)
             record_output.write(relation.SerializeToString())
 
     record_output.close()
