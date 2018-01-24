@@ -9,12 +9,13 @@ import tensorflow as tf
 import qpe_model
 from proto.relation_pb2 import Relation
 from tensorflow_fold.util import proto_tools
+from google.protobuf import json_format
 
 tf.flags.DEFINE_string(
     'train_data_path', '',
     'TF Record file containing the training dataset of expressions.')
 tf.flags.DEFINE_integer(
-    'batch_size', 1000, 'How many samples to read per batch.')
+    'batch_size', 10, 'How many samples to read per batch.')
 tf.flags.DEFINE_integer(
     'embedding_length', 5,
     'How long to make the expression embedding vectors.')

@@ -173,6 +173,7 @@ message Relation {
 		Union = 136;
 		Values = 137;
 		Window = 138;
+		NONE = 139;
     }
 
     message CumulativeCost {
@@ -186,5 +187,5 @@ message Relation {
     repeated Relation relations = 2;
     optional double rowCount = 3;
     optional CumulativeCost cumulativeCost = 4;
-    optional int64 result = 5;
+    optional int32 result = 5;
 }

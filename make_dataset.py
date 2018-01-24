@@ -38,7 +38,7 @@ system3_weight_bias_dict = {"JOIN": {"weight": 1.2, "bias": 1.0},
 
 def evaluate_relation(relation, weight_bias_dict):
     if relation.op == Relation.NONE:
-        return relation.rows
+        return relation.rowCount
     x = 0
     for r in relation.relations:
         x += evaluate_relation(r, weight_bias_dict)
@@ -48,8 +48,7 @@ def evaluate_relation(relation, weight_bias_dict):
 def random_relation(max_depth):
     def build(relation, max_depth):
         if max_depth == 0 or random.uniform(0, 1) < 1.0 / 3.0:
-            relation.rows = random.choice(range(1000, 2000))
-            relation.width = random.choice(range(50, 100))
+            relation.rowCount = random.choice(range(1000, 2000))
             relation.op = Relation.NONE
         else:
             if max_depth < 0:
@@ -77,18 +76,18 @@ def make_random_relation():
     max_depth = random.choice(range(1, 10))
     relation = random_relation(max_depth)
 
-    e = []
-    e.append(evaluate_relation(relation, system1_weight_bias_dict))
-    e.append(evaluate_relation(relation, system2_weight_bias_dict))
-    e.append(evaluate_relation(relation, system3_weight_bias_dict))
-    min_index = 0
-    min_value = e[0]
-    for i in range(len(e)):
-        if e[i] < min_value:
-            min_index = i
-            min_value = e[i]
+    # e = []
+    # e.append(evaluate_relation(relation, system1_weight_bias_dict))
+    # e.append(evaluate_relation(relation, system2_weight_bias_dict))
+    # e.append(evaluate_relation(relation, system3_weight_bias_dict))
+    # min_index = 0
+    # min_value = e[0]
+    # for i in range(len(e)):
+    #     if e[i] < min_value:
+    #         min_index = i
+    #         min_value = e[i]
 
-    relation.result = min_index
+    relation.result = 1
     return relation
     # json = json_format.MessageToJson(relation)
     # return json
@@ -110,6 +109,8 @@ def main(unused_argv):
             json_content = json_query_file.read()
             relation = Relation()
             json_format.Parse(json_content, relation)
+            # print(json_format.MessageToJson(relation))
+            # record_output.write(json_format.MessageToJson(relation))
             record_output.write(relation.SerializeToString())
 
     record_output.close()

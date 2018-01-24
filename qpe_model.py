@@ -17,6 +17,14 @@ def preprocess_relation(expr):
     return expr
 
 
+def result_index(result):
+    if result == 1:
+        return 0
+    if result == 2:
+        return 1
+    return 2
+
+
 class QueryPerformanceEstimatorModel(object):
 
     def __init__(self, state_size):
@@ -126,7 +134,7 @@ class QueryPerformanceEstimatorModel(object):
             'LogicalJoin': query_op('LogicalJoin'),
             'LogicalMatch': query_op('LogicalMatch'),
             'LogicalMinus': query_op('LogicalMinus'),
-            'LogicalProject ': query_op('LogicalProject'),
+            'LogicalProject': query_op('LogicalProject'),
             'LogicalSort': query_op('LogicalSort'),
             'LogicalTableFunctionScan': query_op('LogicalTableFunctionScan'),
             'LogicalTableModify': query_op('LogicalTableModify'),
@@ -173,12 +181,12 @@ class QueryPerformanceEstimatorModel(object):
             'Union': query_op('Union'),
             'Values': query_op('Values'),
             'Window': query_op('Window'),
-            '3L': query_op('Window'),})
+            'NONE': nrows})
 
         relation = td.InputTransform(preprocess_relation) >> cases
         relation_declaration.resolve_to(relation)
         relation_logits = (relation >> td.FC(NUM_LABELS, activation=None, name='FC_logits'))
-        relation_label = (td.GetItem('result') >> td.OneHot(NUM_LABELS))
+        relation_label = (td.GetItem('result') >> td.InputTransform(result_index) >> td.OneHot(NUM_LABELS))
         model = td.AllOf(relation_logits, relation_label)
         self._compiler = td.Compiler.create(model)
         (logits, labels) = self._compiler.output_tensors
