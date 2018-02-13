@@ -30,6 +30,7 @@ class QueryPerformanceEstimatorModel(object):
     def __init__(self, state_size):
         relation_declaration = td.ForwardDeclaration(td.PyObjectType(), state_size)
 
+        op_cell = td.ScopedLayer(tf.contrib.rnn.BasicLSTMCell(num_units=16), 'op_cell')
         nrows = (td.GetItem('rowCount') >> td.Scalar(dtype='int32') >>
                  td.Function(td.Embedding(10, state_size, name='terminal_embed')))
 
@@ -37,6 +38,10 @@ class QueryPerformanceEstimatorModel(object):
             return (td.GetItem('relations')
                     >> td.Map(relation_declaration())
                     >> td.Fold(td.Concat() >> td.Function(td.FC(state_size, name='FC_' + name)), td.FromTensor(tf.zeros(state_size))))
+            # return (td.GetItem('relations')
+            #         >> td.Map(relation_declaration())
+            #         >> td.Fold(td.Concat() >> td.Function(td.RNN(op_cell, name='RNN_' + name)),
+            #                    td.FromTensor(tf.zeros(state_size))))
             # return (td.Record({'relations', td.Map(relation_declaration())})
             #         >> td.Concat()
             #         >> td.FC(state_size, name='FC_' + name))
@@ -90,7 +95,7 @@ class QueryPerformanceEstimatorModel(object):
             'EnumerableSort': query_op('EnumerableSort'),
             'EnumerableTableFunctionScan': query_op('EnumerableTableFunctionScan'),
             'EnumerableTableModify': query_op('EnumerableTableModify'),
-            'EnumerableTableScan': query_op('EnumerableTableScan'),
+            'EnumerableTableScan': nrows,
             'EnumerableThetaJoin': query_op('EnumerableThetaJoin'),
             'EnumerableUncollect': query_op('EnumerableUncollect'),
             'EnumerableUnion': query_op('EnumerableUnion'),
@@ -180,8 +185,7 @@ class QueryPerformanceEstimatorModel(object):
             'Uncollect': query_op('Uncollect'),
             'Union': query_op('Union'),
             'Values': query_op('Values'),
-            'Window': query_op('Window'),
-            'NONE': nrows})
+            'Window': query_op('Window')})
 
         relation = td.InputTransform(preprocess_relation) >> cases
         relation_declaration.resolve_to(relation)

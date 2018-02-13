@@ -15,9 +15,9 @@ tf.flags.DEFINE_string(
     'train_data_path', '',
     'TF Record file containing the training dataset of expressions.')
 tf.flags.DEFINE_integer(
-    'batch_size', 10, 'How many samples to read per batch.')
+    'batch_size', 16, 'How many samples to read per batch.')
 tf.flags.DEFINE_integer(
-    'embedding_length', 5,
+    'embedding_length', 16,
     'How long to make the expression embedding vectors.')
 tf.flags.DEFINE_integer(
     'max_steps', 1000000,
