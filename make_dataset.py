@@ -95,25 +95,51 @@ def make_random_relation():
 
 
 def main(unused_argv):
-    record_output = tf.python_io.TFRecordWriter(FLAGS.output_path)
+    train_record_output = tf.python_io.TFRecordWriter(FLAGS.output_path + "/train.dat")
+    validation_record_output = tf.python_io.TFRecordWriter(FLAGS.output_path + "/validation.dat")
+    test_record_output = tf.python_io.TFRecordWriter(FLAGS.output_path + "/test.dat")
     # for _ in xrange(FLAGS.num_samples):
     #     relation = make_random_relation()
     #     if FLAGS.output_format == "json":
-    #         record_output.write(json_format.MessageToJson(relation))
+    #         train_record_output.write(json_format.MessageToJson(relation))
     #     else:
-    #         record_output.write(relation.SerializeToString())
+    #         train_record_output.write(relation.SerializeToString())
 
-    dataset_path = './dataset'
-    for filename in os.listdir(dataset_path):
-        with open(dataset_path + "/" + filename) as json_query_file:
+    train_dataset_path = './dataset/train'
+    for filename in os.listdir(train_dataset_path):
+        with open(train_dataset_path + "/" + filename) as json_query_file:
             json_content = json_query_file.read()
             relation = Relation()
             json_format.Parse(json_content, relation)
             # print(json_format.MessageToJson(relation))
-            # record_output.write(json_format.MessageToJson(relation))
-            record_output.write(relation.SerializeToString())
+            # train_record_output.write(json_format.MessageToJson(relation))
+            train_record_output.write(relation.SerializeToString())
 
-    record_output.close()
+    train_record_output.close()
+
+    validation_dataset_path = './dataset/validation'
+    for filename in os.listdir(validation_dataset_path):
+        with open(validation_dataset_path + "/" + filename) as json_query_file:
+            json_content = json_query_file.read()
+            relation = Relation()
+            json_format.Parse(json_content, relation)
+            # print(json_format.MessageToJson(relation))
+            # train_record_output.write(json_format.MessageToJson(relation))
+            validation_record_output.write(relation.SerializeToString())
+
+    validation_record_output.close()
+
+    test_dataset_path = './dataset/test'
+    for filename in os.listdir(test_dataset_path):
+        with open(test_dataset_path + "/" + filename) as json_query_file:
+            json_content = json_query_file.read()
+            relation = Relation()
+            json_format.Parse(json_content, relation)
+            # print(json_format.MessageToJson(relation))
+            # train_record_output.write(json_format.MessageToJson(relation))
+            test_record_output.write(relation.SerializeToString())
+
+    test_record_output.close()
 
 
 if __name__ == '__main__':

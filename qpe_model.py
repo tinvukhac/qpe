@@ -203,6 +203,9 @@ class QueryPerformanceEstimatorModel(object):
         optr = tf.train.GradientDescentOptimizer(0.01)
         self._train_op = optr.minimize(self._loss, global_step=self._global_step)
 
+        # correct = tf.nn.in_top_k(logits, labels, 1)
+        # self._eval_op = tf.reduce_sum(tf.cast(correct, tf.int32))
+
     @property
     def loss(self):
         return self._loss
@@ -214,6 +217,10 @@ class QueryPerformanceEstimatorModel(object):
     @property
     def train_op(self):
         return self._train_op
+
+    # @property
+    # def eval_op(self):
+    #     return self._eval_op
 
     @property
     def global_step(self):
