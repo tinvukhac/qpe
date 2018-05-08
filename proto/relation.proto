@@ -185,7 +185,8 @@ message Relation {
     optional OpCode op = 1;
     //optional Relation relations = 2;
     repeated Relation relations = 2;
-    optional double rowCount = 3;
-    optional CumulativeCost cumulativeCost = 4;
-    optional int32 result = 5;
+    optional int64 rowCount = 3;
+	optional int64 rowSize = 4;
+    optional CumulativeCost cumulativeCost = 5;
+    optional int32 result = 6;
 }

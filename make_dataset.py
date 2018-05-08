@@ -6,6 +6,7 @@ from six.moves import xrange
 import tensorflow as tf
 import random
 import os
+import csv
 from google.protobuf import json_format
 from proto.relation_pb2 import Relation
 
@@ -94,10 +95,175 @@ def make_random_relation():
     # return relation.SerializeToString()
 
 
+def convert_relation_to_vector(relation, json_content):
+    dict = {'AbstractConverter': 0,
+            'AbstractRelNode': 0,
+            'Aggregate': 0,
+            'AltTraitConverter': 0,
+            'BindableAggregate': 0,
+            'BindableFilter': 0,
+            'BindableJoin': 0,
+            'BindableProject': 0,
+            'BindableRel': 0,
+            'BindableSort': 0,
+            'BindableTableScan': 0,
+            'BindableUnion': 0,
+            'BindableValues': 0,
+            'BindableWindow': 0,
+            'BiRel': 0,
+            'BridgeRel': 0,
+            'Calc': 0,
+            'Chi': 0,
+            'Collect': 0,
+            'Converter': 0,
+            'ConverterImpl': 0,
+            'Correlate': 0,
+            'Delta': 0,
+            'ElasticsearchFilter': 0,
+            'ElasticsearchProject': 0,
+            'ElasticsearchRel': 0,
+            'ElasticsearchSort': 0,
+            'ElasticsearchTableScan': 0,
+            'ElasticsearchToEnumerableConverter': 0,
+            'EnumerableAggregate': 0,
+            'EnumerableBindable': 0,
+            'EnumerableCalc': 0,
+            'EnumerableCollect': 0,
+            'EnumerableCorrelate': 0,
+            'EnumerableFilter': 0,
+            'EnumerableInterpretable': 0,
+            'EnumerableInterpreter': 0,
+            'EnumerableIntersect': 0,
+            'EnumerableJoin': 0,
+            'EnumerableLimit': 0,
+            'EnumerableMergeJoin': 0,
+            'EnumerableMinus': 0,
+            'EnumerableProject': 0,
+            'EnumerableRel': 0,
+            'EnumerableSemiJoin': 0,
+            'EnumerableSort': 0,
+            'EnumerableTableFunctionScan': 0,
+            'EnumerableTableModify': 0,
+            'EnumerableTableScan': 0,
+            'EnumerableThetaJoin': 0,
+            'EnumerableUncollect': 0,
+            'EnumerableUnion': 0,
+            'EnumerableValues': 0,
+            'EnumerableWindow': 0,
+            'EquiJoin': 0,
+            'Exchange': 0,
+            'Filter': 0,
+            'FooRel': 0,
+            'HepRelVertex': 0,
+            'IntermediateNode': 0,
+            'InterpretableConverter': 0,
+            'InterpretableRel': 0,
+            'Intersect': 0,
+            'IterMergedRel': 0,
+            'IterSingleRel': 0,
+            'JdbcAggregate': 0,
+            'JdbcCalc': 0,
+            'JdbcFilter': 0,
+            'JdbcIntersect': 0,
+            'JdbcJoin': 0,
+            'JdbcMinus': 0,
+            'JdbcProject': 0,
+            'JdbcRel': 0,
+            'JdbcSort': 0,
+            'JdbcTableModify': 0,
+            'JdbcTableScan': 0,
+            'JdbcToEnumerableConverter': 0,
+            'JdbcUnion': 0,
+            'JdbcValues': 0,
+            'Join': 0,
+            'LeafRel': 0,
+            'LogicalAggregate': 0,
+            'LogicalCalc': 0,
+            'LogicalChi': 0,
+            'LogicalCorrelate': 0,
+            'LogicalDelta': 0,
+            'LogicalExchange': 0,
+            'LogicalFilter': 0,
+            'LogicalIntersect': 0,
+            'LogicalJoin': 0,
+            'LogicalMatch': 0,
+            'LogicalMinus': 0,
+            'LogicalProject': 0,
+            'LogicalSort': 0,
+            'LogicalTableFunctionScan': 0,
+            'LogicalTableModify': 0,
+            'LogicalTableScan': 0,
+            'LogicalUnion': 0,
+            'LogicalValues': 0,
+            'LogicalWindow': 0,
+            'Match': 0,
+            'Minus': 0,
+            'MockJdbcTableScan': 0,
+            'MultiJoin': 0,
+            'MyRel': 0,
+            'NoneConverter': 0,
+            'NoneLeafRel': 0,
+            'NoneSingleRel': 0,
+            'Phys': 0,
+            'PhysAgg': 0,
+            'PhysicalSort': 0,
+            'PhysLeafRel': 0,
+            'PhysProj': 0,
+            'PhysSingleRel': 0,
+            'PhysSort': 0,
+            'PhysTable': 0,
+            'PhysToIteratorConverter': 0,
+            'Project': 0,
+            'RandomSingleRel': 0,
+            'RelSubset': 0,
+            'RootSingleRel': 0,
+            'Sample': 0,
+            'SelfFlatteningRel': 0,
+            'SemiJoin': 0,
+            'SetOp': 0,
+            'SingleRel': 0,
+            'SingletonLeafRel': 0,
+            'Sort': 0,
+            'SortExchange': 0,
+            'StarTableScan': 0,
+            'TableFunctionScan': 0,
+            'TableModify': 0,
+            'TableScan': 0,
+            'TestLeafRel': 0,
+            'TestSingleRel': 0,
+            'Uncollect': 0,
+            'Union': 0,
+            'Values': 0,
+            'Window': 0}
+    for key in dict.keys():
+        dict[key] = json_content.count(key)
+        # dict[key] = get_value(relation, key)
+    values = ""
+    for key in sorted(dict):
+        values += str(dict[key]) + ","
+    values += str(relation.result)
+    return dict, values
+
+
+def get_value(relation, key):
+    result = 0
+    if key == Relation.OpCode.keys()[relation.op]:
+        result += relation.rowCount
+    if len(relation.relations) == 0:
+        return result
+    else:
+        for r in relation.relations:
+            result += get_value(r, key)
+        return result
+
+
 def main(unused_argv):
     train_record_output = tf.python_io.TFRecordWriter(FLAGS.output_path + "/train.dat")
     validation_record_output = tf.python_io.TFRecordWriter(FLAGS.output_path + "/validation.dat")
     test_record_output = tf.python_io.TFRecordWriter(FLAGS.output_path + "/test.dat")
+    train_record_output_csv = FLAGS.output_path + "/train.csv"
+    validation_record_output_csv = FLAGS.output_path + "/validation.csv"
+    test_record_output_csv = FLAGS.output_path + "/test.csv"
     # for _ in xrange(FLAGS.num_samples):
     #     relation = make_random_relation()
     #     if FLAGS.output_format == "json":
@@ -114,6 +280,10 @@ def main(unused_argv):
             # print(json_format.MessageToJson(relation))
             # train_record_output.write(json_format.MessageToJson(relation))
             train_record_output.write(relation.SerializeToString())
+            op_dict, values = convert_relation_to_vector(relation, json_content)
+            with open(train_record_output_csv, 'a') as csv_file:
+                csv_file.write(values)
+                csv_file.write("\n")
 
     train_record_output.close()
 
@@ -126,6 +296,10 @@ def main(unused_argv):
             # print(json_format.MessageToJson(relation))
             # train_record_output.write(json_format.MessageToJson(relation))
             validation_record_output.write(relation.SerializeToString())
+            op_dict, values = convert_relation_to_vector(relation, json_content)
+            with open(validation_record_output_csv, 'a') as csv_file:
+                csv_file.write(values)
+                csv_file.write("\n")
 
     validation_record_output.close()
 
@@ -138,6 +312,10 @@ def main(unused_argv):
             # print(json_format.MessageToJson(relation))
             # train_record_output.write(json_format.MessageToJson(relation))
             test_record_output.write(relation.SerializeToString())
+            op_dict, values = convert_relation_to_vector(relation, json_content)
+            with open(test_record_output_csv, 'a') as csv_file:
+                csv_file.write(values)
+                csv_file.write("\n")
 
     test_record_output.close()
 

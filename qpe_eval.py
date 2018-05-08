@@ -17,9 +17,9 @@ tf.flags.DEFINE_string(
     '',
     'TF Record containing the validation dataset of expressions.')
 tf.flags.DEFINE_integer(
-    'batch_size', 32, 'How many samples to read per batch.')
+    'batch_size', 10, 'How many samples to read per batch.')
 tf.flags.DEFINE_integer(
-    'embedding_length', 32,
+    'embedding_length', 5,
     'How long to make the expression embedding vectors.')
 tf.flags.DEFINE_string(
     'eval_master', '',
@@ -28,7 +28,7 @@ tf.flags.DEFINE_string(
     'logdir', '/tmp/qpe/logs',
     'Directory where we read models and write event logs.')
 tf.flags.DEFINE_integer(
-    'eval_interval_secs', 60,
+    'eval_interval_secs', 10,
     'Time interval between eval runs. Zero to do a single eval then exit.')
 FLAGS = tf.flags.FLAGS
 
@@ -88,13 +88,14 @@ def main(unused_argv):
             wait_for_checkpoint=True,
             start_standard_services=False)
 
+        validation_data = [next(validation_iterator) for _ in xrange(FLAGS.batch_size)]
+
         while not supervisor.ShouldStop():
             ckpt = tf.train.get_checkpoint_state(FLAGS.logdir)
             if ckpt and ckpt.model_checkpoint_path:
                 saver.restore(sess, ckpt.model_checkpoint_path)
             else:
                 continue
-            validation_data = [next(validation_iterator) for _ in xrange(FLAGS.batch_size)]
             step, validation_loss, validation_accuracy = sess.run(
                 [global_step, loss, accuracy],
                 feed_dict=classifier.build_feed_dict(validation_data))

@@ -6,7 +6,7 @@ import tensorflow as tf
 import tensorflow_fold.public.blocks as td
 
 
-NUM_LABELS = 3
+NUM_LABELS = 2
 
 
 def preprocess_relation(expr):
@@ -30,8 +30,7 @@ class QueryPerformanceEstimatorModel(object):
     def __init__(self, state_size):
         relation_declaration = td.ForwardDeclaration(td.PyObjectType(), state_size)
 
-        op_cell = td.ScopedLayer(tf.contrib.rnn.BasicLSTMCell(num_units=16), 'op_cell')
-        nrows = (td.GetItem('rowCount') >> td.Scalar(dtype='int32') >>
+        nrows = (td.GetItem('rowCount') >> td.Scalar(dtype='int64') >> td.Function(tf.to_float) >> td.Function(tf.log) >> td.Function(tf.to_int32) >>
                  td.Function(td.Embedding(10, state_size, name='terminal_embed')))
 
         def query_op(name):
@@ -189,7 +188,16 @@ class QueryPerformanceEstimatorModel(object):
 
         relation = td.InputTransform(preprocess_relation) >> cases
         relation_declaration.resolve_to(relation)
-        relation_logits = (relation >> td.FC(NUM_LABELS, activation=None, name='FC_logits'))
+        relation_logits = (relation >> td.FC(state_size, activation=tf.sigmoid, name='FC_logits_1')
+                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_2')
+                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_3')
+                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_4')
+                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_5')
+                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_6')
+                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_7')
+                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_8')
+                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_9')
+                           >> td.FC(NUM_LABELS, activation=tf.sigmoid, name='FC_logits_10'))
         relation_label = (td.GetItem('result') >> td.InputTransform(result_index) >> td.OneHot(NUM_LABELS))
         model = td.AllOf(relation_logits, relation_label)
         self._compiler = td.Compiler.create(model)
@@ -203,8 +211,6 @@ class QueryPerformanceEstimatorModel(object):
         optr = tf.train.GradientDescentOptimizer(0.01)
         self._train_op = optr.minimize(self._loss, global_step=self._global_step)
 
-        # correct = tf.nn.in_top_k(logits, labels, 1)
-        # self._eval_op = tf.reduce_sum(tf.cast(correct, tf.int32))
 
     @property
     def loss(self):
@@ -217,10 +223,6 @@ class QueryPerformanceEstimatorModel(object):
     @property
     def train_op(self):
         return self._train_op
-
-    # @property
-    # def eval_op(self):
-    #     return self._eval_op
 
     @property
     def global_step(self):
