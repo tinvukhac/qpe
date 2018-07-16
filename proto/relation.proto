@@ -182,6 +182,12 @@ message Relation {
         optional double io = 3;
     }
 
+	message HistogramBin {
+		optional double from = 1;
+		optional double to = 2;
+		optional int64 freq = 3;
+	}
+
     optional OpCode op = 1;
     //optional Relation relations = 2;
     repeated Relation relations = 2;
@@ -189,4 +195,5 @@ message Relation {
 	optional int64 rowSize = 4;
     optional CumulativeCost cumulativeCost = 5;
     optional int32 result = 6;
+	repeated HistogramBin bins = 7;
 }

@@ -261,9 +261,9 @@ def main(unused_argv):
     train_record_output = tf.python_io.TFRecordWriter(FLAGS.output_path + "/train.dat")
     validation_record_output = tf.python_io.TFRecordWriter(FLAGS.output_path + "/validation.dat")
     test_record_output = tf.python_io.TFRecordWriter(FLAGS.output_path + "/test.dat")
-    train_record_output_csv = FLAGS.output_path + "/train.csv"
-    validation_record_output_csv = FLAGS.output_path + "/validation.csv"
-    test_record_output_csv = FLAGS.output_path + "/test.csv"
+    # train_record_output_csv = FLAGS.output_path + "/train.csv"
+    # validation_record_output_csv = FLAGS.output_path + "/validation.csv"
+    # test_record_output_csv = FLAGS.output_path + "/test.csv"
     # for _ in xrange(FLAGS.num_samples):
     #     relation = make_random_relation()
     #     if FLAGS.output_format == "json":
@@ -280,10 +280,10 @@ def main(unused_argv):
             # print(json_format.MessageToJson(relation))
             # train_record_output.write(json_format.MessageToJson(relation))
             train_record_output.write(relation.SerializeToString())
-            op_dict, values = convert_relation_to_vector(relation, json_content)
-            with open(train_record_output_csv, 'a') as csv_file:
-                csv_file.write(values)
-                csv_file.write("\n")
+            # op_dict, values = convert_relation_to_vector(relation, json_content)
+            # with open(train_record_output_csv, 'a') as csv_file:
+            #     csv_file.write(values)
+            #     csv_file.write("\n")
 
     train_record_output.close()
 
@@ -296,10 +296,10 @@ def main(unused_argv):
             # print(json_format.MessageToJson(relation))
             # train_record_output.write(json_format.MessageToJson(relation))
             validation_record_output.write(relation.SerializeToString())
-            op_dict, values = convert_relation_to_vector(relation, json_content)
-            with open(validation_record_output_csv, 'a') as csv_file:
-                csv_file.write(values)
-                csv_file.write("\n")
+            # op_dict, values = convert_relation_to_vector(relation, json_content)
+            # with open(validation_record_output_csv, 'a') as csv_file:
+            #     csv_file.write(values)
+            #     csv_file.write("\n")
 
     validation_record_output.close()
 
@@ -312,10 +312,10 @@ def main(unused_argv):
             # print(json_format.MessageToJson(relation))
             # train_record_output.write(json_format.MessageToJson(relation))
             test_record_output.write(relation.SerializeToString())
-            op_dict, values = convert_relation_to_vector(relation, json_content)
-            with open(test_record_output_csv, 'a') as csv_file:
-                csv_file.write(values)
-                csv_file.write("\n")
+            # op_dict, values = convert_relation_to_vector(relation, json_content)
+            # with open(test_record_output_csv, 'a') as csv_file:
+            #     csv_file.write(values)
+            #     csv_file.write("\n")
 
     test_record_output.close()
 

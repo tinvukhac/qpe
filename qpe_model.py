@@ -6,7 +6,7 @@ import tensorflow as tf
 import tensorflow_fold.public.blocks as td
 
 
-NUM_LABELS = 2
+NUM_LABELS = 3
 
 
 def preprocess_relation(expr):
@@ -18,6 +18,8 @@ def preprocess_relation(expr):
 
 
 def result_index(result):
+    result %= 3
+    result += 1
     if result == 1:
         return 0
     if result == 2:
@@ -30,8 +32,12 @@ class QueryPerformanceEstimatorModel(object):
     def __init__(self, state_size):
         relation_declaration = td.ForwardDeclaration(td.PyObjectType(), state_size)
 
-        nrows = (td.GetItem('rowCount') >> td.Scalar(dtype='int64') >> td.Function(tf.to_float) >> td.Function(tf.log) >> td.Function(tf.to_int32) >>
-                 td.Function(td.Embedding(10, state_size, name='terminal_embed')))
+        # nrows = (td.GetItem('rowCount') >> td.Scalar(dtype='int64') >> td.Function(tf.to_float) >> td.Function(tf.log) >> td.Function(tf.to_int32) >>
+        #          td.Function(td.Embedding(10, state_size, name='terminal_embed')))
+        # nrows = (td.Record([('rowCount', td.Scalar(dtype='int64') >> td.Function(td.Embedding(10, state_size, name='terminal_embed'))),
+        #                     ('rowCount', td.Scalar(dtype='int64') >> td.Function(td.Embedding(10, state_size, name='terminal_embed')))])
+        #                     >> td.Concat() >> td.Function(td.FC(5)))
+        nrows = (td.GetItem('rowCount') >> td.Scalar(dtype='int64') >> td.Function(td.Embedding(10, state_size, name='terminal_embed')))
 
         def query_op(name):
             return (td.GetItem('relations')
@@ -188,29 +194,41 @@ class QueryPerformanceEstimatorModel(object):
 
         relation = td.InputTransform(preprocess_relation) >> cases
         relation_declaration.resolve_to(relation)
-        relation_logits = (relation >> td.FC(state_size, activation=tf.sigmoid, name='FC_logits_1')
-                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_2')
-                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_3')
-                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_4')
-                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_5')
-                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_6')
-                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_7')
-                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_8')
-                           >> td.FC(state_size*4, activation=tf.sigmoid, name='FC_logits_9')
-                           >> td.FC(NUM_LABELS, activation=tf.sigmoid, name='FC_logits_10'))
-        relation_label = (td.GetItem('result') >> td.InputTransform(result_index) >> td.OneHot(NUM_LABELS))
+
+        relation_logits = relation >> td.FC(state_size, activation=tf.nn.relu, name='FC_logits') \
+                          >> td.FC(1, activation=None) >> td.Function(tf.to_float) #>> td.Function(lambda xs: tf.squeeze(xs, axis=1)) >> td.Reduce()
+        relation_label = (td.GetItem('result') >> td.Scalar(dtype='int64') >> td.Function(tf.to_float))
         model = td.AllOf(relation_logits, relation_label)
         self._compiler = td.Compiler.create(model)
         (logits, labels) = self._compiler.output_tensors
-
-        self._loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels))
-
-        self._accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(labels, 1), tf.argmax(logits, 1)), dtype=tf.float32))
+        self._loss = tf.nn.l2_loss(logits - labels)
+        self._accuracy, accuracy_op = tf.metrics.accuracy(labels=tf.argmax(labels, 0), predictions=tf.argmax(logits, 0))
 
         self._global_step = tf.Variable(0, name='global_step', trainable=False)
         optr = tf.train.GradientDescentOptimizer(0.01)
         self._train_op = optr.minimize(self._loss, global_step=self._global_step)
 
+        # # Add histogram to the input
+        # relation_histogram = (td.GetItem('result') >> td.InputTransform(result_index) >> td.OneHot(NUM_LABELS))
+        # # relation_histogram = (td.GetItem('bins') >> td.FC(state_size, activation=tf.nn.relu, name='FC_histogram'))
+        # relation_logits = (relation >> td.FC(state_size, activation=tf.nn.relu, name='FC_logits_1')
+        #                    >> td.FC(NUM_LABELS, activation=tf.nn.relu, name='FC_logits_final'))
+        # relation_label = (td.GetItem('result') >> td.InputTransform(result_index) >> td.OneHot(NUM_LABELS))
+        # model = td.AllOf(relation_logits, relation_label)
+        # self._compiler = td.Compiler.create(model)
+        # (logits, labels) = self._compiler.output_tensors
+        #
+        # self._loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels))
+        #
+        # self._accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(labels, 1), tf.argmax(logits, 1)), dtype=tf.float32))
+        #
+        # self._global_step = tf.Variable(0, name='global_step', trainable=False)
+        # optr = tf.train.GradientDescentOptimizer(0.01)
+        # self._train_op = optr.minimize(self._loss, global_step=self._global_step)
+
+    # def equal(x, y, name=None):
+    #     result = _op_def_lib.apply_op("Equal", x=x, y=y, name=name)
+    #     return result
 
     @property
     def loss(self):

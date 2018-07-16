@@ -75,11 +75,17 @@ def main(unused_argv):
         with tf.device(tf.train.replica_device_setter(FLAGS.ps_tasks)):
 
             # Build the graph.
-            classifier = qpe_model.QueryPerformanceEstimatorModel(FLAGS.embedding_length)
-            loss = classifier.loss
-            accuracy = classifier.accuracy
-            train_op = classifier.train_op
-            global_step = classifier.global_step
+            # classifier = qpe_model.QueryPerformanceEstimatorModel(FLAGS.embedding_length)
+            # loss = classifier.loss
+            # accuracy = classifier.accuracy
+            # train_op = classifier.train_op
+            # global_step = classifier.global_step
+
+            regressor = qpe_model.QueryPerformanceEstimatorModel(FLAGS.embedding_length)
+            loss = regressor.loss
+            accuracy = regressor.accuracy
+            train_op = regressor.train_op
+            global_step = regressor.global_step
 
             # Set up the supervisor.
             supervisor = tf.train.Supervisor(logdir=FLAGS.logdir, is_chief=(FLAGS.task == 0), save_summaries_secs=10, save_model_secs=30)
@@ -88,7 +94,8 @@ def main(unused_argv):
             # Run the trainer.
             for _ in xrange(FLAGS.max_steps):
                 batch = [next(train_iterator) for _ in xrange(FLAGS.batch_size)]
-                fdict = classifier.build_feed_dict(batch)
+                # fdict = classifier.build_feed_dict(batch)
+                fdict = regressor.build_feed_dict(batch)
 
                 _, step, loss_v, accuracy_v = sess.run(
                 [train_op, global_step, loss, accuracy], feed_dict=fdict)
